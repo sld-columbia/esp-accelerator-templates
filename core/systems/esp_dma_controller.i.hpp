@@ -141,7 +141,7 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_read()
         dma_info_t dma_read_ctrl_dma_info = dma_read_ctrl.read();
 #endif
 
-        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: read (index = %d, length = %d)", ESP_TO_UINT64(dma_read_ctrl_dma_info.index), ESP_TO_UINT64(dma_read_ctrl_dma_info.length));
+        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: read (index = %llu, length = %llu)", ESP_TO_UINT64(dma_read_ctrl_dma_info.index), ESP_TO_UINT64(dma_read_ctrl_dma_info.length));
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: done!");
 
         // Read request
@@ -186,7 +186,7 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_write()
             dma_info_t dma_write_ctrl_dma_info = dma_write_ctrl.read();
 #endif
 
-        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: write (index = %d, length = %d)", ESP_TO_UINT64(dma_write_ctrl_dma_info.index), ESP_TO_UINT64(dma_write_ctrl_dma_info.length));
+        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: write (index = %llu, length = %llu)", ESP_TO_UINT64(dma_write_ctrl_dma_info.index), ESP_TO_UINT64(dma_write_ctrl_dma_info.length));
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: done!");
 
         // Write request
@@ -265,7 +265,7 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::dma_read(
     sc_assert(mem != NULL);
     for (uint32_t i = 0; i < burst_size; ++i)
     {
-        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "(mem_base = %d + i = %d = %d) <  (_MEM_SIZE_ = %d)", ESP_TO_UINT64(mem_base), ESP_TO_UINT64(i), ESP_TO_UINT64(mem_base+i), _MEM_SIZE_);
+        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "(mem_base = %llu + i = %llu = %llu) <  (_MEM_SIZE_ = %lu)", ESP_TO_UINT64(mem_base), ESP_TO_UINT64(i), ESP_TO_UINT64(mem_base+i), _MEM_SIZE_);
         sc_assert(mem_base + i < _MEM_SIZE_);
 
         sc_dt::sc_bv<_DMA_WIDTH_> data = mem[mem_base + i];

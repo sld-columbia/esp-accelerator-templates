@@ -47,13 +47,15 @@
 #define ESP_TO_UINT64(x) x
 #endif
 
-//#define ESP_REPORT_TIME(time, ...) \
-//  { std::stringstream _ss; _ss << time; \
-//    std::string _s = _ss.str(); const char * _time = _s.c_str(); \
-//    fprintf(stderr, "Info: %s: ", sc_object::basename()); \
-//    fprintf(stderr, "@%s ", _time); \
-//    fprintf(stderr, __VA_ARGS__); \
-//    fprintf(stderr, "\n\n"); }
+#if 0
+#define ESP_REPORT_TIME(time, ...) \
+  { std::stringstream _ss; _ss << time; \
+    std::string _s = _ss.str(); const char * _time = _s.c_str(); \
+    fprintf(stderr, "Info: %s: ", sc_object::basename()); \
+    fprintf(stderr, "@%s ", _time); \
+    fprintf(stderr, __VA_ARGS__); \
+    fprintf(stderr, "\n\n"); }
+#endif
 
 template <unsigned int n>
 struct slog_2 { enum { value = 1 + slog_2<n/2>::value }; };
