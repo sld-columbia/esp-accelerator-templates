@@ -19,8 +19,8 @@ inline bool dma_info_t::operator==(const dma_info_t &rhs) const
 inline ostream& operator<<(ostream& os, dma_info_t const &dma_info)
 {
     os << "{" << dma_info.index  << ","
-              << dma_info.index  << ","
-              << dma_info.length << "}";
+              << dma_info.length  << ","
+              << dma_info.size << "}";
     return os;
 }
 
