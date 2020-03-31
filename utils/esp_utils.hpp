@@ -15,17 +15,24 @@
 #define ESP_REPORT_TIME(time, ...)
 
 #else
-#define ESP_REPORT_INFO(...) \
+
+#define VON 1
+#define VOFF 0
+
+#define ESP_REPORT_INFO(verbosity, ...) \
+  if (verbosity == VON) \
   { fprintf(stderr, "Info: %s: ", sc_object::basename()); \
     fprintf(stderr, __VA_ARGS__); \
     fprintf(stderr, "\n"); }
 
-#define ESP_REPORT_ERROR(...) \
+#define ESP_REPORT_ERROR(verbosity, ...) \
+  if (verbosity == VON) \
   { fprintf(stderr, "Error: %s: ", sc_object::basename()); \
     fprintf(stderr, __VA_ARGS__); \
     fprintf(stderr, "\n"); }
 
-#define ESP_REPORT_TIME(time, ...) \
+#define ESP_REPORT_TIME(verbosity, time, ...) \
+  if (verbosity == VON) \
   { double ns = time.to_default_time_units(); \
     fprintf(stderr, "Info: @%.1fns: ", ns); \
     fprintf(stderr, "%s: ", sc_object::basename()); \
