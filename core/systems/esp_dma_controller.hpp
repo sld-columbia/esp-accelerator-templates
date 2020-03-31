@@ -23,46 +23,34 @@ class esp_dma_controller : public sc_module
         // Reset signal
         sc_in<bool> rst;
 
-        #if 1
-
+#if defined(__MNTR_CONNECTIONS__)
         // DMA read control (non blocking)
-        nb_get_initiator<dma_info_t> dma_read_ctrl;
-
+        Connections::In<dma_info_t> dma_read_ctrl;
         // DMA write control (non blocking)
-        nb_get_initiator<dma_info_t> dma_write_ctrl;
-
+        Connections::In<dma_info_t> dma_write_ctrl;
         // DMA write channel (blocking)
-        b_get_initiator<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
-
-        #else
-
+        Connections::In<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
+#else
         // DMA read control (non blocking)
-        cynw_p2p<dma_info_t>::in dma_read_ctrl;
-
+        p2p<>::in<dma_info_t> dma_read_ctrl;
         // DMA write control (non blocking)
-        cynw_p2p<dma_info_t>::in dma_write_ctrl;
-
+        p2p<>::in<dma_info_t> dma_write_ctrl;
         // DMA write channel (blocking)
-        cynw_p2p<sc_dt::sc_bv<32> >::in dma_write_chnl;
-
-        #endif
+        p2p<>::in<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
+#endif
 
         // Accelerator done
         sc_in<bool> acc_done;
 
         // Output ports
 
-        #if 1
-
+#if defined(__MNTR_CONNECTIONS__)
         // DMA read channel (blocking)
-        b_put_initiator<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
-
-        #else
-
+        Connections::Out<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
+#else
         // DMA read channel (blocking)
-        cynw_p2p<sc_dt::sc_bv<32> >::out dma_read_chnl;
-
-        #endif
+        p2p<>::out<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
+#endif
 
         // Accelerator reset
         sc_out<bool> acc_rst;
@@ -85,21 +73,40 @@ class esp_dma_controller : public sc_module
             , total_read_bytes(0)
             , mem(ptr)
         {
+#ifdef DMA_SINGLE_PROCESS
             SC_CTHREAD(controller, clk.pos());
             reset_signal_is(rst, false);
             set_stack_size(0x400000);
+#else
+            SC_CTHREAD(controller_read, clk.pos());
+            reset_signal_is(rst, false);
+            set_stack_size(0x400000);
 
+            SC_CTHREAD(controller_write, clk.pos());
+            reset_signal_is(rst, false);
+            set_stack_size(0x400000);
+
+            SC_CTHREAD(controller_done, clk.pos());
+            reset_signal_is(rst, false);
+            set_stack_size(0x400000);
+#endif
             // Binding
-            dma_read_ctrl.clk_rst(clk, rst);
-            dma_read_chnl.clk_rst(clk, rst);
-            dma_write_ctrl.clk_rst(clk, rst);
-            dma_write_chnl.clk_rst(clk, rst);
+            //dma_read_ctrl.clk_rst(clk, rst);
+            //dma_read_chnl.clk_rst(clk, rst);
+            //dma_write_ctrl.clk_rst(clk, rst);
+            //dma_write_chnl.clk_rst(clk, rst);
         }
 
         // Process
 
         // Handle requests
+#ifdef DMA_SINGLE_PROCESS
         void controller();
+#else
+        void controller_read();
+        void controller_write();
+        void controller_done();
+#endif
 
         // Functions
 

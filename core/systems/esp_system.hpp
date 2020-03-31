@@ -11,7 +11,7 @@
 
 template <
     size_t _DMA_WIDTH_,
-    size_t _MEM_SIZE_   
+    size_t _MEM_SIZE_
     >
 class esp_system : public sc_module
 {
@@ -26,35 +26,35 @@ class esp_system : public sc_module
         // Reset signal
         sc_in<bool> rst;
 
-        #if 1
+#if defined(__MNTR_CONNECTIONS__)
 
         // DMA read control
-        put_get_channel< dma_info_t> dma_read_ctrl;
+        Connections::Combinational<dma_info_t> dma_read_ctrl;
 
         // DMA write control
-        put_get_channel< dma_info_t> dma_write_ctrl;
+        Connections::Combinational<dma_info_t> dma_write_ctrl;
 
         // DMA read channel
-        put_get_channel< sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
+        Connections::Combinational<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
 
         // DMA write channel
-        put_get_channel< sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
+        Connections::Combinational<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
 
-        #else
+#else
 
         // DMA read control
-        cynw_p2p< dma_info_t> dma_read_ctrl;
+        p2p<>::chan<dma_info_t> dma_read_ctrl;
 
         // DMA write control
-        cynw_p2p< dma_info_t> dma_write_ctrl;
+        p2p<>::chan<dma_info_t> dma_write_ctrl;
 
         // DMA read channel
-        cynw_p2p< sc_dt::sc_bv<32> > dma_read_chnl;
+        p2p<>::chan<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
 
         // DMA write channel
-        cynw_p2p< sc_dt::sc_bv<32> > dma_write_chnl;
+        p2p<>::chan<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
 
-        #endif
+#endif
 
         // Internal signals
 

@@ -15,26 +15,29 @@
 
 #else
 
-// Using cynw fixed point (default)
+// Using Algorithmic C Datatype fixed point (default)
 
 #include <systemc.h>
-#include <cynw_fixed.h>
+#include <ac_int.h>
+#include <ac_fixed.h>
 
 #endif
 
 // Channels
 
-#ifdef __CARGO__
+#if defined(__CARGO__)
 
-// Using CARGO flex channels
+#error "CARGO does not support Catapult HLS primitives yet."
 
-#include <flex_channels.hpp>
+#elif defined(__MNTR_CONNECTIONS__)
+
+#include <connections/connections.h>
 
 #else
 
-// Using cynw flex channels (default)
+// Using legacy P2P library (default)
 
-#include <cynw_flex_channels.h>
+#include "ccs_p2p.h"
 
 #endif
 

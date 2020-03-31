@@ -8,14 +8,15 @@ template <
 >
 inline void esp_accelerator<_DMA_WIDTH_>::reset_dma_read()
 {
-  #if 0
-    dma_read_ctrl.reset_put();
-    dma_read_chnl.reset_get();
-  #else
-    dma_read_ctrl.reset();
-    dma_read_chnl.reset();
-  #endif
-
+#if defined(__MNTR_CONNECTIONS__)
+    // Reset
+    dma_read_ctrl.Reset();
+    dma_read_chnl.Reset();
+#else
+    // Reset
+    dma_read_ctrl.reset_write();
+    dma_read_chnl.reset_read();
+#endif
 }
 
 template <
@@ -23,13 +24,15 @@ template <
 >
 inline void esp_accelerator<_DMA_WIDTH_>::reset_dma_write()
 {
-  #if 0 
-    dma_write_ctrl.reset_put();
-    dma_write_chnl.reset_put();
-  #else
-    dma_write_ctrl.reset();
-    dma_write_chnl.reset();
-  #endif
+#if defined(__MNTR_CONNECTIONS__)
+    // Reset
+    dma_write_ctrl.Reset();
+    dma_write_chnl.Reset();
+#else
+    // Reset
+    dma_write_ctrl.reset_write();
+    dma_write_chnl.reset_write();
+#endif
 }
 
 template <
@@ -37,33 +40,35 @@ template <
 >
 inline void esp_accelerator<_DMA_WIDTH_>::reset_accelerator_done()
 {
-    acc_done.write(false);   
+    acc_done.write(false);
 }
 
 // Utility functions
 
+#pragma design modulario
 template <
     size_t _DMA_WIDTH_
-> 
+>
 inline void esp_accelerator<_DMA_WIDTH_>::process_done()
 {
-    HLS_DEFINE_PROTOCOL("process-done");
+    //HLS_DEFINE_PROTOCOL("process-done");
 
-    do 
+#pragma hls_unroll no
+    do
     {
-        HLS_UNROLL_LOOP(OFF);
 
         wait();
 
     } while (true);
 }
 
+#pragma design modulario
 template <
     size_t _DMA_WIDTH_
 >
 inline void esp_accelerator<_DMA_WIDTH_>::accelerator_done()
 {
-    HLS_DEFINE_PROTOCOL("accelerator-done");
+    //HLS_DEFINE_PROTOCOL("accelerator-done");
 
     acc_done.write(true); wait();
 

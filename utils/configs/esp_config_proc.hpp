@@ -9,7 +9,8 @@
 class esp_config_proc : public esp_config
 {
     // Inline module
-    HLS_INLINE_MODULE;
+    //HLS_INLINE_MODULE;
+//#warning "INLINE MODULE!"
 
     public:
 

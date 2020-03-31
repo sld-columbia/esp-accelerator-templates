@@ -8,23 +8,45 @@
 
 #include "esp_systemc.hpp"
 
+#ifdef __SYNTHESIS__
+
+#define ESP_REPORT_INFO(...)
+#define ESP_REPORT_ERROR(...)
+#define ESP_REPORT_TIME(time, ...)
+
+#else
 #define ESP_REPORT_INFO(...) \
-  fprintf(stderr, "Info: %s: ", sc_object::basename()); \
-  fprintf(stderr, __VA_ARGS__); \
-  fprintf(stderr, "\n\n");
+  { fprintf(stderr, "Info: %s: ", sc_object::basename()); \
+    fprintf(stderr, __VA_ARGS__); \
+    fprintf(stderr, "\n"); }
 
 #define ESP_REPORT_ERROR(...) \
-  fprintf(stderr, "Error: %s: ", sc_object::basename()); \
-  fprintf(stderr, __VA_ARGS__); \
-  fprintf(stderr, "\n\n");
+  { fprintf(stderr, "Error: %s: ", sc_object::basename()); \
+    fprintf(stderr, __VA_ARGS__); \
+    fprintf(stderr, "\n"); }
 
 #define ESP_REPORT_TIME(time, ...) \
-  { std::stringstream _ss; _ss << time; \
-    std::string _s = _ss.str(); const char * _time = _s.c_str(); \
-    fprintf(stderr, "Info: %s: ", sc_object::basename()); \
-    fprintf(stderr, "@%s ", _time); \
+  { double ns = time.to_default_time_units(); \
+    fprintf(stderr, "Info: @%.1fns: ", ns); \
+    fprintf(stderr, "%s: ", sc_object::basename()); \
     fprintf(stderr, __VA_ARGS__); \
-    fprintf(stderr, "\n\n"); } \
+    fprintf(stderr, "\n"); }
+
+#endif
+
+#if defined(__MNTR_CONNECTIONS__)
+#define ESP_TO_UINT64(x) x.to_uint64()
+#else
+#define ESP_TO_UINT64(x) x
+#endif
+
+//#define ESP_REPORT_TIME(time, ...) \
+//  { std::stringstream _ss; _ss << time; \
+//    std::string _s = _ss.str(); const char * _time = _s.c_str(); \
+//    fprintf(stderr, "Info: %s: ", sc_object::basename()); \
+//    fprintf(stderr, "@%s ", _time); \
+//    fprintf(stderr, __VA_ARGS__); \
+//    fprintf(stderr, "\n\n"); }
 
 template <unsigned int n>
 struct slog_2 { enum { value = 1 + slog_2<n/2>::value }; };

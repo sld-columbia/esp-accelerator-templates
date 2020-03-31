@@ -12,6 +12,6 @@ struct conf_info_t;
 
 // Forward (default) typedef
 
-typedef uint32_t debug_info_t;
+//typedef uint32_t debug_info_t;
 
 #endif // __ESP_DATA_HPP__

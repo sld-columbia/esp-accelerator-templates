@@ -33,6 +33,22 @@ class dma_info_t
         // Length
         sc_dt::sc_bv<3> size;
 
+#if defined(__MNTR_CONNECTIONS__)
+        static const unsigned int width = 32 + 32 + 3;
+
+        template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
+//#warning "DOES THIS WORK???"
+            m &index;
+            m &length;
+            m &size;
+//            std::cout << "Info: @" << sc_time_stamp() << ": Marshall(): " << index << ", " << length << ", " << size << std::endl;
+        }
+
+#else
+        dma_info_t(const int reset_value)
+            : index(reset_value), length(reset_value), size(SIZE_WORD) { }
+#endif
+
         // Constructors
 
         dma_info_t()

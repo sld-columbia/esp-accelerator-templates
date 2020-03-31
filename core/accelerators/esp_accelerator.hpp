@@ -23,17 +23,17 @@ class esp_accelerator : public sc_module
         // Reset signal
         sc_in<bool> rst;
 
-        #if 1
+#if defined(__MNTR_CONNECTIONS__)
 
         // DMA read channel
-        get_initiator<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
+        Connections::In<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
 
-        #else
+#else
 
-        // DMA read channel
-        cynw_p2p<sc_dt::sc_bv<32> >::in dma_read_chnl;
+        // DMA read channel (blocking)
+        p2p<>::in<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
 
-        #endif
+#endif
 
         // Accelerator configuration
         sc_in<conf_info_t> conf_info;
@@ -49,29 +49,29 @@ class esp_accelerator : public sc_module
         // Debug port
         sc_out<debug_info_t> debug;
 
-        #if 1
+#if defined(__MNTR_CONNECTIONS__)
+
+        // DMA read control (non blocking)
+        Connections::Out<dma_info_t> dma_read_ctrl;
+
+        // DMA write control (non blocking)
+        Connections::Out<dma_info_t> dma_write_ctrl;
+
+        // DMA write channel (blocking)
+        Connections::Out<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
+
+#else
 
         // DMA read control
-        b_put_initiator<dma_info_t> dma_read_ctrl;
+        p2p<>::out<dma_info_t> dma_read_ctrl;
 
         // DMA write control
-        b_put_initiator<dma_info_t> dma_write_ctrl;
+        p2p<>::out<dma_info_t> dma_write_ctrl;
 
         // DMA write channel
-        put_initiator<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
+        p2p<>::out<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
 
-        #else
-
-        // DMA read control
-        cynw_p2p<dma_info_t>::out dma_read_ctrl;
-
-        // DMA write control
-        cynw_p2p<dma_info_t>::out dma_write_ctrl;
-
-        // DMA write channel
-        cynw_p2p<sc_dt::sc_bv<32> >::out dma_write_chnl;
-
-        #endif
+#endif
 
         // Constructor
         SC_HAS_PROCESS(esp_accelerator);
@@ -86,10 +86,10 @@ class esp_accelerator : public sc_module
             , dma_write_chnl("dma_write_chnl")
         {
             // Clock and reset binding
-            dma_read_ctrl.clk_rst(clk, rst);
-            dma_read_chnl.clk_rst(clk, rst);
-            dma_write_ctrl.clk_rst(clk, rst);
-            dma_write_chnl.clk_rst(clk, rst);
+            //dma_read_ctrl.clk_rst(clk, rst);
+            //dma_read_chnl.clk_rst(clk, rst);
+            //dma_write_ctrl.clk_rst(clk, rst);
+            //dma_write_chnl.clk_rst(clk, rst);
         }
 
         // Reset functions

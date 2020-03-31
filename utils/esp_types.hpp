@@ -12,7 +12,12 @@
 
 #define uint16_t unsigned short
 
+#if defined(__MNTR_CONNECTIONS__)
+#include <systemc.h>
+#define uint32_t sc_uint<32>
+#else
 #define uint32_t unsigned int
+#endif
 
 #define uint64_t unsigned long long
 
