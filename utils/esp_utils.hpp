@@ -43,8 +43,10 @@
 
 #if defined(__MNTR_CONNECTIONS__)
 #define ESP_TO_UINT64(x) x.to_uint64()
+#define ESP_TO_INT64(x) x.to_int64()
 #else
 #define ESP_TO_UINT64(x) x
+#define ESP_TO_INT64(x) x
 #endif
 
 #if 0

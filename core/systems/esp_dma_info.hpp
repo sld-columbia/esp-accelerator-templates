@@ -9,15 +9,23 @@
 #include "utils/esp_types.hpp"
 #include "utils/esp_systemc.hpp"
 
-#define SIZE_BYTE   sc_dt::sc_bv<3>(0)
-#define SIZE_HWORD  sc_dt::sc_bv<3>(1)
-#define SIZE_WORD   sc_dt::sc_bv<3>(2)
-#define SIZE_DWORD  sc_dt::sc_bv<3>(3)
-#define SIZE_4WORD  sc_dt::sc_bv<3>(4)
-#define SIZE_8WORD  sc_dt::sc_bv<3>(5)
-#define SIZE_16WORD sc_dt::sc_bv<3>(6)
-#define SIZE_32WORD sc_dt::sc_bv<3>(7)
+//#define SIZE_BYTE   sc_dt::sc_bv<3>(0)
+//#define SIZE_HWORD  sc_dt::sc_bv<3>(1)
+//#define SIZE_WORD   sc_dt::sc_bv<3>(2)
+//#define SIZE_DWORD  sc_dt::sc_bv<3>(3)
+//#define SIZE_4WORD  sc_dt::sc_bv<3>(4)
+//#define SIZE_8WORD  sc_dt::sc_bv<3>(5)
+//#define SIZE_16WORD sc_dt::sc_bv<3>(6)
+//#define SIZE_32WORD sc_dt::sc_bv<3>(7)
 
+#define SIZE_BYTE   0
+#define SIZE_HWORD  1
+#define SIZE_WORD   2
+#define SIZE_DWORD  3
+#define SIZE_4WORD  4
+#define SIZE_8WORD  5
+#define SIZE_16WORD 6
+#define SIZE_32WORD 7
 
 class dma_info_t
 {
