@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2019 Columbia University, System Level Design Group
+// Copyright (c) 2011-2020 Columbia University, System Level Design Group
 // SPDX-License-Identifier: MIT
 
 inline dma_info_t& dma_info_t::operator=(const dma_info_t &other)
