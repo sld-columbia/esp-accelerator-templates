@@ -64,31 +64,6 @@ struct slog_2 { enum { value = 1 + slog_2<n/2>::value }; };
 
 template <> struct slog_2<1> { enum { value = 0 }; };
 
-// Helper macros
-
-#define __str(s) #s
-#define __xstr(s) __str(s)
-
-#define MYPPCAT_4(A,B,C,D) A ## _DMA ## B ## _CHK ## C ## _PP ## D
-
-#define MYPPCAT_41(A,B,C,D) A ## _DMA ## B ## _CHK ## C ## _PP ## D ## _t
-
-#define MYPPCAT_42(A,B,C,D) A ## _DMA ## B ## _CHK ## C ## _PP ## D.hpp
-
-// Macros for users
-
-#define GENERATE_PLM_TYPE(mem, dma, chk, pp) \
-    MYPPCAT_41(mem, dma, chk, pp)
-
-#define GENERATE_PLM_NAME(mem, dma, chk, pp) \
-    __xstr(MYPPCAT_4(mem, dma, chk, pp))
-
-#define GENERATE_PLM_HDR(mem, dma, chk, pp) \
-    __xstr(MYPPCAT_42(mem, dma, chk, pp))
-
-
-
-
 #ifdef ESP_DEBUG
 
 // Print info only if debug
