@@ -18,13 +18,9 @@ class handshake_t;
 class handshake_req_t
 {
 public:
+    handshake_req_t(sc_module_name name) {} //: __req(std::string(name).append("_req")) { }
 
-    // Constructor
-    handshake_req_t(sc_module_name name) : __req(name) { }
-
-    // Request channel
-    p2p_sync<>::out<> __req;
-
+    sc_signal<bool> __req;
 };
 
 // Handshake acknowledge
@@ -32,14 +28,10 @@ public:
 class handshake_ack_t
 {
 public:
+    handshake_ack_t(sc_module_name name) {} //: __ack(std::string(name).append("_ack")) { }
 
-    // Constructor
-    handshake_ack_t(sc_module_name name) : __ack(name) { }
-
-    // Ack channel
-    p2p_sync<>::in<> __ack;
+    sc_signal<bool> __ack;
 };
-
 #endif
 
 // Interface
@@ -57,17 +49,14 @@ public:
 #endif
         __channel(name) {
 #if defined(__MATCHLIB_CONNECTIONS__)
-//            req.__req(__channel);
-//            ack.__ack(__channel);
 #else
-#warning "Catapult HLS does not suppor the binding of Legacy P2P channels in the same SC_MODULE."
-            __req.__req(__channel);
-            __ack.__ack(__channel);
+//#warning "Catapult HLS does not suppor the binding of Legacy P2P channels in the same SC_MODULE."
+//            __req.__req(__channel);
+//            __ack.__ack(__channel);
 #endif
     }
 
 #if defined(__MATCHLIB_CONNECTIONS__)
-
     inline void reset_req() {
         __channel.ResetRead();
     }
@@ -84,21 +73,30 @@ public:
         __channel.Push(true);
     }
 #else
-
     void reset_req() {
-        __req.__req.reset_sync_out();
+        __req.__req.write(0);
     }
 
     void reset_ack() {
-        __ack.__ack.reset_sync_in();
+        __ack.__ack.write(0);
     }
 
+#pragma design modulario<sync>
     void req() {
-        __req.__req.sync_out();
+        do { wait(); }
+        while (!__ack.__ack.read());
+        __req.__req.write(1);
+        wait();
+        __req.__req.write(0);
     }
 
+#pragma design modulario<sync>
     void ack() {
-        __ack.__ack.sync_in();
+        wait();
+        __ack.__ack.write(1);
+        do{ wait(); }
+        while (!__req.__req.read());
+        __ack.__ack.write(0);
     }
 
     // Req and ack
