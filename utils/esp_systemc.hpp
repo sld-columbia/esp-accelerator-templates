@@ -29,7 +29,7 @@
 
 #error "CARGO does not support Catapult HLS primitives yet."
 
-#elif defined(__MNTR_CONNECTIONS__)
+#elif defined(__MATCHLIB_CONNECTIONS__)
 
 #include <connections/connections.h>
 

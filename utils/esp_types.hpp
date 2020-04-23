@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
 #include <systemc.h>
 
 // Unsigned integers

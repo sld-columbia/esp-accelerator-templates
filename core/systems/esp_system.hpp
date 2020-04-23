@@ -26,7 +26,7 @@ class esp_system : public sc_module
         // Reset signal
         sc_in<bool> rst;
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
 
         // DMA read control
         Connections::Combinational<dma_info_t> dma_read_ctrl;

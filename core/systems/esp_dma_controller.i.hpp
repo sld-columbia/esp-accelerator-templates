@@ -11,7 +11,7 @@ template <
     >
 void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller()
 {
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
     // Reset
     dma_read_ctrl.Reset();
     dma_read_chnl.Reset();
@@ -42,7 +42,7 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller()
 
         do {
             wait();
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
             dma_read_ctrl_flag = dma_read_ctrl.PopNB(dma_read_ctrl_dma_info);
             dma_write_ctrl_flag = dma_write_ctrl.PopNB(dma_write_ctrl_dma_info);
 #else
@@ -119,7 +119,7 @@ template <
 void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_read()
 {
     // Reset
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
     dma_read_ctrl.Reset();
     dma_read_chnl.Reset();
 #else
@@ -135,13 +135,13 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_read()
     {
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request...");
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
         dma_info_t dma_read_ctrl_dma_info = dma_read_ctrl.Pop();
 #else
         dma_info_t dma_read_ctrl_dma_info = dma_read_ctrl.read();
 #endif
 
-        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: read (index = %llu, length = %llu)", ESP_TO_UINT64(dma_read_ctrl_dma_info.index), ESP_TO_UINT64(dma_read_ctrl_dma_info.length));
+        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: read (index = %u, length = %u)", ESP_TO_UINT32(dma_read_ctrl_dma_info.index), ESP_TO_UINT32(dma_read_ctrl_dma_info.length));
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: done!");
 
         // Read request
@@ -164,7 +164,7 @@ template <
 void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_write()
 {
     // Reset
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
     dma_write_ctrl.Reset();
     dma_write_chnl.Reset();
 #else
@@ -180,13 +180,13 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_write()
     {
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request...");
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
             dma_info_t dma_write_ctrl_dma_info = dma_write_ctrl.Pop();
 #else
             dma_info_t dma_write_ctrl_dma_info = dma_write_ctrl.read();
 #endif
 
-        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: write (index = %llu, length = %llu)", ESP_TO_UINT64(dma_write_ctrl_dma_info.index), ESP_TO_UINT64(dma_write_ctrl_dma_info.length));
+        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: write (index = %u, length = %u)", ESP_TO_UINT32(dma_write_ctrl_dma_info.index), ESP_TO_UINT32(dma_write_ctrl_dma_info.length));
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: done!");
 
         // Write request
@@ -209,7 +209,7 @@ template <
 void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_done()
 {
     // Reset
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
 #else
 #endif
 
@@ -265,12 +265,12 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::dma_read(
     sc_assert(mem != NULL);
     for (uint32_t i = 0; i < burst_size; ++i)
     {
-        ESP_REPORT_TIME(VOFF, sc_time_stamp(), "(mem_base = %llu + i = %llu = %llu) <  (_MEM_SIZE_ = %lu)", ESP_TO_UINT64(mem_base), ESP_TO_UINT64(i), ESP_TO_UINT64(mem_base+i), _MEM_SIZE_);
+        //ESP_REPORT_TIME(VOFF, sc_time_stamp(), "(mem_base = %u + i = %u = %u) <  (_MEM_SIZE_ = %lu)", ESP_TO_UINT32(mem_base), ESP_TO_UINT32(i), ESP_TO_UINT32(mem_base+i), _MEM_SIZE_);
         sc_assert(mem_base + i < _MEM_SIZE_);
 
         sc_dt::sc_bv<_DMA_WIDTH_> data = mem[mem_base + i];
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
         dma_read_chnl.Push(data);
 #else
         dma_read_chnl.write(data);
@@ -300,7 +300,7 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::dma_write(
     {
         sc_assert(mem_base + i < _MEM_SIZE_);
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
         sc_dt::sc_bv<_DMA_WIDTH_> data = dma_write_chnl.Pop();
 #else
         sc_dt::sc_bv<_DMA_WIDTH_> data = dma_write_chnl.read();

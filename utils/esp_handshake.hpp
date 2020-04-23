@@ -13,7 +13,7 @@
 class handshake_t;
 
 // Handshake request
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
 #else
 class handshake_req_t
 {
@@ -102,14 +102,14 @@ class handshake_t
         // Constructor
         handshake_t(sc_module_name name)
           :
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
 #else
             req(std::string(name).append("_req").c_str()),
             ack(std::string(name).append("_ack").c_str()),
 #endif
             __channel(name)
         {
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
 //            req.__req(__channel);
 //            ack.__ack(__channel);
 #else
@@ -123,7 +123,7 @@ class handshake_t
 //        >
 //        inline void bind_with(esp_accelerator<_DMA_WIDTH_> &accelerator)
 //        {
-//#if defined(__MNTR_CONNECTIONS__)
+//#if defined(__MATCHLIB_CONNECTIONS__)
 //
 //#else
 //            req.clk_rst(accelerator.clk, accelerator.rst);
@@ -131,7 +131,7 @@ class handshake_t
 //#endif
 //        }
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
 
         inline void reset_req() {
             __channel.ResetRead();
@@ -157,7 +157,7 @@ class handshake_t
     private:
 
         // Channel
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
         Connections::Combinational<bool> __channel;
 #else
         p2p<>::chan<bool> __channel;

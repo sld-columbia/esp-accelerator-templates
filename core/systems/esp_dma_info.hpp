@@ -41,7 +41,7 @@ class dma_info_t
         // Length
         sc_dt::sc_bv<3> size;
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
         static const unsigned int width = 32 + 32 + 3;
         template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
             m &index;

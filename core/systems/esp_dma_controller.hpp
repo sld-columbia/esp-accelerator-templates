@@ -23,7 +23,7 @@ class esp_dma_controller : public sc_module
         // Reset signal
         sc_in<bool> rst;
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
         // DMA read control (non blocking)
         Connections::In<dma_info_t> dma_read_ctrl;
         // DMA write control (non blocking)
@@ -44,7 +44,7 @@ class esp_dma_controller : public sc_module
 
         // Output ports
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
         // DMA read channel (blocking)
         Connections::Out<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
 #else

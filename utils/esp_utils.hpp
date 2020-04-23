@@ -41,7 +41,7 @@
 
 #endif
 
-#if defined(__MNTR_CONNECTIONS__)
+#if defined(__MATCHLIB_CONNECTIONS__)
 #define ESP_TO_UINT64(x) x.to_uint64()
 #define ESP_TO_INT64(x) x.to_int64()
 #define ESP_TO_UINT32(x) x.to_uint()
@@ -49,6 +49,8 @@
 #else
 #define ESP_TO_UINT64(x) x
 #define ESP_TO_INT64(x) x
+#define ESP_TO_UINT32(x) x
+#define ESP_TO_INT32(x) x
 #endif
 
 #if 0
