@@ -17,38 +17,32 @@ class handshake_t;
 #else
 class handshake_req_t
 {
-    public:
+public:
+    // Friend zone
+    friend class handshake_t;
 
-        // Friend zone
-        friend class handshake_t;
+    // Constructor
+    handshake_req_t(sc_module_name name) : __req(name) { }
 
-        // Constructor
-        handshake_req_t(sc_module_name name)
-          : __req(name) { }
+    // Clock and reset binding
+    template<typename CLK, typename RST>
+    void clk_rst(CLK& clk, RST& rst) {
+        //__req.clk_rst(clk,rst);
+    }
 
-        // Clock and reset binding
-        template<typename CLK, typename RST>
-        void clk_rst(CLK& clk, RST& rst)
-          {
-              //__req.clk_rst(clk,rst);
-          }
+    // Reset method
+    void reset_req() {
+        __req.reset_sync_out();
+    }
 
-        // Reset method
-        void reset_req()
-          {
-              __req.reset_read();
-          }
+    // Req method
+    void req() {
+        __req.sync_out();
+    }
 
-        // Req method
-        void req()
-          {
-              __req.read();
-          }
-
-    private:
-
-        // Request channel
-        p2p<>::in<bool> __req;
+private:
+    // Request channel
+    p2p_sync<>::out<> __req;
 
 };
 
@@ -57,38 +51,32 @@ class handshake_req_t
 class handshake_ack_t
 {
 
-    public:
+public:
+    // Friend zone
+    friend class handshake_t;
 
-        // Friend zone
-        friend class handshake_t;
+    // Constructor
+    handshake_ack_t(sc_module_name name) : __ack(name) { }
 
-        // Constructor
-        handshake_ack_t(sc_module_name name)
-          : __ack(name) { }
+    // Clock and reset binding
+    template<typename CLK, typename RST>
+    void clk_rst(CLK& clk, RST& rst) {
+        //__ack.clk_rst(clk,rst);
+    }
 
-        // Clock and reset binding
-        template<typename CLK, typename RST>
-        void clk_rst(CLK& clk, RST& rst)
-          {
-            //__ack.clk_rst(clk,rst);
-          }
+    // Reset method
+    void reset_ack() {
+        __ack.reset_sync_in();
+    }
 
-        // Reset method
-        void reset_ack()
-          {
-              __ack.reset_write();
-          }
+    // Ack method
+    void ack() {
+        __ack.sync_in();
+    }
 
-        // Ack method
-        void ack()
-          {
-              __ack.write(true);
-          }
-
-    private:
-
-        // Ack channel
-        p2p<>::out<bool> __ack;
+private:
+    // Ack channel
+    p2p_sync<>::in<> __ack;
 };
 
 #endif
@@ -97,70 +85,56 @@ class handshake_ack_t
 
 class handshake_t
 {
-    public:
+public:
 
-        // Constructor
-        handshake_t(sc_module_name name)
-          :
+    // Constructor
+    handshake_t(sc_module_name name) :
 #if defined(__MATCHLIB_CONNECTIONS__)
 #else
-            req(std::string(name).append("_req").c_str()),
-            ack(std::string(name).append("_ack").c_str()),
+        req(std::string(name).append("_req").c_str()),
+        ack(std::string(name).append("_ack").c_str()),
 #endif
-            __channel(name)
-        {
+        __channel(name) {
 #if defined(__MATCHLIB_CONNECTIONS__)
 //            req.__req(__channel);
 //            ack.__ack(__channel);
 #else
-            req.__req.bind(__channel);
-            ack.__ack.bind(__channel);
+#warning "Catapult HLS does not suppor the binding of Legacy P2P channels in the same SC_MODULE."
+            req.__req(__channel);
+            ack.__ack(__channel);
 #endif
         }
 
-//        template <
-//            size_t _DMA_WIDTH_
-//        >
-//        inline void bind_with(esp_accelerator<_DMA_WIDTH_> &accelerator)
-//        {
-//#if defined(__MATCHLIB_CONNECTIONS__)
-//
-//#else
-//            req.clk_rst(accelerator.clk, accelerator.rst);
-//            ack.clk_rst(accelerator.clk, accelerator.rst);
-//#endif
-//        }
-
 #if defined(__MATCHLIB_CONNECTIONS__)
 
-        inline void reset_req() {
-            __channel.ResetRead();
-        }
+    inline void reset_req() {
+        __channel.ResetRead();
+    }
 
-        inline void reset_ack() {
-            __channel.ResetWrite();
-        }
+    inline void reset_ack() {
+        __channel.ResetWrite();
+    }
 
-        inline void req() {
-            __channel.Pop();
-        }
+    inline void req() {
+        __channel.Pop();
+    }
 
-        inline void ack() {
-            __channel.Push(true);
-        }
+    inline void ack() {
+        __channel.Push(true);
+    }
 #else
-        // Req and ack
-        handshake_req_t req;
-        handshake_ack_t ack;
+    // Req and ack
+    handshake_req_t req;
+    handshake_ack_t ack;
 #endif
 
-    private:
+private:
 
-        // Channel
+    // Channel
 #if defined(__MATCHLIB_CONNECTIONS__)
-        Connections::Combinational<bool> __channel;
+    Connections::Combinational<bool> __channel;
 #else
-        p2p<>::chan<bool> __channel;
+    p2p_sync<>::chan<> __channel;
 #endif
 };
 
