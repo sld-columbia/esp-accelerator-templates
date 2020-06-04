@@ -13,8 +13,6 @@
 class handshake_t;
 
 // Handshake request
-#if defined(__MATCHLIB_CONNECTIONS__)
-#else
 class handshake_req_t
 {
 public:
@@ -32,7 +30,6 @@ public:
 
     sc_signal<bool> __ack;
 };
-#endif
 
 // Interface
 
@@ -42,37 +39,10 @@ public:
 
     // Constructor
     handshake_t(sc_module_name name) :
-#if defined(__MATCHLIB_CONNECTIONS__)
-#else
         __req(std::string(name).append("_req").c_str()),
-        __ack(std::string(name).append("_ack").c_str()),
-#endif
-        __channel(name) {
-#if defined(__MATCHLIB_CONNECTIONS__)
-#else
-//#warning "Catapult HLS does not suppor the binding of Legacy P2P channels in the same SC_MODULE."
-//            __req.__req(__channel);
-//            __ack.__ack(__channel);
-#endif
+        __ack(std::string(name).append("_ack").c_str()) {
     }
 
-#if defined(__MATCHLIB_CONNECTIONS__)
-    inline void reset_req() {
-        __channel.ResetRead();
-    }
-
-    inline void reset_ack() {
-        __channel.ResetWrite();
-    }
-
-    inline void req() {
-        __channel.Pop();
-    }
-
-    inline void ack() {
-        __channel.Push(true);
-    }
-#else
     void reset_req() {
         __req.__req.write(0);
     }
@@ -102,14 +72,6 @@ public:
     // Req and ack
     handshake_req_t __req;
     handshake_ack_t __ack;
-#endif
-
-    // Channel
-#if defined(__MATCHLIB_CONNECTIONS__)
-    Connections::Combinational<bool> __channel;
-#else
-    p2p_sync<>::chan<> __channel;
-#endif
 };
 
 
