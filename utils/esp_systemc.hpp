@@ -25,20 +25,6 @@
 
 // Channels
 
-#if defined(__CARGO__)
-
-#error "CARGO does not support Catapult HLS primitives yet."
-
-#elif defined(__MATCHLIB_CONNECTIONS__)
-
 #include <connections/connections.h>
-
-#else
-
-// Using legacy P2P library (default)
-
-#include "ccs_p2p.h"
-
-#endif
 
 #endif // __ESP_SYSTEMC_HPP__

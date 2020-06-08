@@ -11,19 +11,11 @@ template <
     >
 void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller()
 {
-#if defined(__MATCHLIB_CONNECTIONS__)
     // Reset
     dma_read_ctrl.Reset();
     dma_read_chnl.Reset();
     dma_write_ctrl.Reset();
     dma_write_chnl.Reset();
-#else
-    // Reset
-    dma_read_ctrl.reset_read();
-    dma_read_chnl.reset_write();
-    dma_write_ctrl.reset_read();
-    dma_write_chnl.reset_read();
-#endif
 
     acc_rst.write(false);
     wait();
@@ -42,13 +34,8 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller()
 
         do {
             wait();
-#if defined(__MATCHLIB_CONNECTIONS__)
             dma_read_ctrl_flag = dma_read_ctrl.PopNB(dma_read_ctrl_dma_info);
             dma_write_ctrl_flag = dma_write_ctrl.PopNB(dma_write_ctrl_dma_info);
-#else
-            dma_read_ctrl_flag = dma_read_ctrl.nb_read(dma_read_ctrl_dma_info);
-            dma_write_ctrl_flag = dma_write_ctrl.nb_read(dma_write_ctrl_dma_info);
-#endif
             //ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: read = %d (index = %d, length = %d)", dma_read_ctrl_flag, ESP_TO_UINT64(dma_read_ctrl_dma_info.index), ESP_TO_UINT64(dma_read_ctrl_dma_info.length));
             //ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: write = %d (index = %d, length = %d)", dma_write_ctrl_flag, ESP_TO_UINT64(dma_write_ctrl_dma_info.index), ESP_TO_UINT64(dma_write_ctrl_dma_info.length));
         } while (!dma_read_ctrl_flag
@@ -119,13 +106,8 @@ template <
 void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_read()
 {
     // Reset
-#if defined(__MATCHLIB_CONNECTIONS__)
     dma_read_ctrl.Reset();
     dma_read_chnl.Reset();
-#else
-    dma_read_ctrl.reset_read();
-    dma_read_chnl.reset_write();
-#endif
 
     wait();
 
@@ -135,11 +117,7 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_read()
     {
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request...");
 
-#if defined(__MATCHLIB_CONNECTIONS__)
         dma_info_t dma_read_ctrl_dma_info = dma_read_ctrl.Pop();
-#else
-        dma_info_t dma_read_ctrl_dma_info = dma_read_ctrl.read();
-#endif
 
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: read (index = %u, length = %u)", ESP_TO_UINT32(dma_read_ctrl_dma_info.index), ESP_TO_UINT32(dma_read_ctrl_dma_info.length));
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: done!");
@@ -164,13 +142,8 @@ template <
 void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_write()
 {
     // Reset
-#if defined(__MATCHLIB_CONNECTIONS__)
     dma_write_ctrl.Reset();
     dma_write_chnl.Reset();
-#else
-    dma_write_ctrl.reset_read();
-    dma_write_chnl.reset_read();
-#endif
 
     wait();
 
@@ -180,11 +153,7 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_write()
     {
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request...");
 
-#if defined(__MATCHLIB_CONNECTIONS__)
-            dma_info_t dma_write_ctrl_dma_info = dma_write_ctrl.Pop();
-#else
-            dma_info_t dma_write_ctrl_dma_info = dma_write_ctrl.read();
-#endif
+        dma_info_t dma_write_ctrl_dma_info = dma_write_ctrl.Pop();
 
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: write (index = %u, length = %u)", ESP_TO_UINT32(dma_write_ctrl_dma_info.index), ESP_TO_UINT32(dma_write_ctrl_dma_info.length));
         ESP_REPORT_TIME(VOFF, sc_time_stamp(), "Waiting for a DMA request: done!");
@@ -209,10 +178,6 @@ template <
 void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller_done()
 {
     // Reset
-#if defined(__MATCHLIB_CONNECTIONS__)
-#else
-#endif
-
     acc_rst.write(false);
     wait();
     acc_rst.write(true);
@@ -268,13 +233,9 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::dma_read(
         //ESP_REPORT_TIME(VOFF, sc_time_stamp(), "(mem_base = %u + i = %u = %u) <  (_MEM_SIZE_ = %lu)", ESP_TO_UINT32(mem_base), ESP_TO_UINT32(i), ESP_TO_UINT32(mem_base+i), _MEM_SIZE_);
         sc_assert(mem_base + i < _MEM_SIZE_);
 
-        sc_dt::sc_bv<_DMA_WIDTH_> data = mem[mem_base + i];
+        ac_int<_DMA_WIDTH_, false> data = mem[mem_base + i];
 
-#if defined(__MATCHLIB_CONNECTIONS__)
         dma_read_chnl.Push(data);
-#else
-        dma_read_chnl.write(data);
-#endif
     }
 
     if (first_dma_read)
@@ -300,11 +261,8 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::dma_write(
     {
         sc_assert(mem_base + i < _MEM_SIZE_);
 
-#if defined(__MATCHLIB_CONNECTIONS__)
-        sc_dt::sc_bv<_DMA_WIDTH_> data = dma_write_chnl.Pop();
-#else
-        sc_dt::sc_bv<_DMA_WIDTH_> data = dma_write_chnl.read();
-#endif
+        ac_int<_DMA_WIDTH_, false> data = dma_write_chnl.Pop();
+
         mem[mem_base + i] = data;
     }
 

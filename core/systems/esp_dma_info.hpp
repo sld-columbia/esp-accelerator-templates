@@ -9,15 +9,6 @@
 #include "utils/esp_types.hpp"
 #include "utils/esp_systemc.hpp"
 
-//#define SIZE_BYTE   sc_dt::sc_bv<3>(0)
-//#define SIZE_HWORD  sc_dt::sc_bv<3>(1)
-//#define SIZE_WORD   sc_dt::sc_bv<3>(2)
-//#define SIZE_DWORD  sc_dt::sc_bv<3>(3)
-//#define SIZE_4WORD  sc_dt::sc_bv<3>(4)
-//#define SIZE_8WORD  sc_dt::sc_bv<3>(5)
-//#define SIZE_16WORD sc_dt::sc_bv<3>(6)
-//#define SIZE_32WORD sc_dt::sc_bv<3>(7)
-
 #define SIZE_BYTE   0
 #define SIZE_HWORD  1
 #define SIZE_WORD   2
@@ -39,26 +30,21 @@ class dma_info_t
         uint32_t length;
 
         // Length
-        sc_dt::sc_bv<3> size;
+        ac_int<3, false> size;
 
-#if defined(__MATCHLIB_CONNECTIONS__)
         static const unsigned int width = 32 + 32 + 3;
         template <unsigned int Size> void Marshall(Marshaller<Size> &m) {
             m &index;
             m &length;
             m &size;
         }
-#else
-        dma_info_t(const int reset_value)
-            : index(reset_value), length(reset_value), size(SIZE_WORD) { }
-#endif
 
         // Constructors
 
         dma_info_t()
             : index(0), length(0), size(SIZE_WORD) { }
 
-        dma_info_t(uint32_t i, uint32_t l, sc_dt::sc_bv<3> s)
+        dma_info_t(uint32_t i, uint32_t l, ac_int<3, false> s)
             : index(i), length(l), size(s) { }
 
         dma_info_t(const dma_info_t &other)

@@ -23,41 +23,27 @@ class esp_dma_controller : public sc_module
         // Reset signal
         sc_in<bool> rst;
 
-#if defined(__MATCHLIB_CONNECTIONS__)
         // DMA read control (non blocking)
         Connections::In<dma_info_t> dma_read_ctrl;
         // DMA write control (non blocking)
         Connections::In<dma_info_t> dma_write_ctrl;
         // DMA write channel (blocking)
-        Connections::In<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
-#else
-        // DMA read control (non blocking)
-        p2p<>::in<dma_info_t> dma_read_ctrl;
-        // DMA write control (non blocking)
-        p2p<>::in<dma_info_t> dma_write_ctrl;
-        // DMA write channel (blocking)
-        p2p<>::in<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
-#endif
+        Connections::In<ac_int<_DMA_WIDTH_, false> > dma_write_chnl;
 
         // Accelerator done
         sc_in<bool> acc_done;
 
         // Output ports
 
-#if defined(__MATCHLIB_CONNECTIONS__)
-        // DMA read channel (blocking)
-        Connections::Out<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
-#else
-        // DMA read channel (blocking)
-        p2p<>::out<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
-#endif
+        // DMA read channel
+        Connections::Out<ac_int<_DMA_WIDTH_, false> > dma_read_chnl;
 
         // Accelerator reset
         sc_out<bool> acc_rst;
 
         // Constructor
         SC_HAS_PROCESS(esp_dma_controller);
-        esp_dma_controller(sc_module_name name, sc_dt::sc_bv<_DMA_WIDTH_> *ptr)
+        esp_dma_controller(sc_module_name name, ac_int<_DMA_WIDTH_, false> *ptr)
             : sc_module(name)
             , clk("clk")
             , rst("rst")
@@ -147,7 +133,7 @@ class esp_dma_controller : public sc_module
         unsigned total_read_bytes;
 
         // Memory pointer
-        sc_dt::sc_bv<_DMA_WIDTH_> *mem;
+        ac_int<_DMA_WIDTH_, false> *mem;
 
 };
 

@@ -26,8 +26,6 @@ class esp_system : public sc_module
         // Reset signal
         sc_in<bool> rst;
 
-#if defined(__MATCHLIB_CONNECTIONS__)
-
         // DMA read control
         Connections::Combinational<dma_info_t> dma_read_ctrl;
 
@@ -35,26 +33,10 @@ class esp_system : public sc_module
         Connections::Combinational<dma_info_t> dma_write_ctrl;
 
         // DMA read channel
-        Connections::Combinational<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
+        Connections::Combinational<ac_int<_DMA_WIDTH_, false> > dma_read_chnl;
 
         // DMA write channel
-        Connections::Combinational<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
-
-#else
-
-        // DMA read control
-        p2p<>::chan<dma_info_t> dma_read_ctrl;
-
-        // DMA write control
-        p2p<>::chan<dma_info_t> dma_write_ctrl;
-
-        // DMA read channel
-        p2p<>::chan<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
-
-        // DMA write channel
-        p2p<>::chan<sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
-
-#endif
+        Connections::Combinational<ac_int<_DMA_WIDTH_, false> > dma_write_chnl;
 
         // Internal signals
 
@@ -74,7 +56,7 @@ class esp_system : public sc_module
         sc_signal<debug_info_t> debug;
 
         // Shared memory buffer model
-        sc_dt::sc_bv<_DMA_WIDTH_> *mem;
+        ac_int<_DMA_WIDTH_, false> *mem;
 
         // DMA controller instace
         esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_> *dmac;
@@ -96,7 +78,7 @@ class esp_system : public sc_module
             , acc_rst("acc_rst")
             , acc_done("acc_done")
             , debug("debug")
-            , mem(new sc_dt::sc_bv<_DMA_WIDTH_>[_MEM_SIZE_])
+            , mem(new ac_int<_DMA_WIDTH_, false>[_MEM_SIZE_])
             , dmac(new esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>("dma-controller", mem))
         {
             SC_CTHREAD(config_proc, clk.pos());
