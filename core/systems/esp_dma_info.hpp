@@ -33,16 +33,19 @@ class dma_info_t
         // Length
         sc_dt::sc_bv<3> size;
 
+        // User
+        sc_dt::sc_bv<5> user;
+
         // Constructors
 
         dma_info_t()
-            : index(0), length(0), size(SIZE_WORD) { }
+            : index(0), length(0), size(SIZE_WORD), user(0) { }
 
-        dma_info_t(uint32_t i, uint32_t l, sc_dt::sc_bv<3> s)
-            : index(i), length(l), size(s) { }
+        dma_info_t(uint32_t i, uint32_t l, sc_dt::sc_bv<3> s, sc_dt::sc_bv<5> u)
+            : index(i), length(l), size(s), user(u) { }
 
         dma_info_t(const dma_info_t &other)
-            : index(other.index), length(other.length), size(other.size) { }
+            : index(other.index), length(other.length), size(other.size), user(other.user) { }
 
         // Operators
 
