@@ -28,10 +28,14 @@ class esp_accelerator : public sc_module
         // DMA read channel
         get_initiator<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
 
+        get_initiator<sc_dt::sc_bv<1> > dma_write_rsp;
+
         #else
 
         // DMA read channel
         cynw_p2p<sc_dt::sc_bv<32> >::in dma_read_chnl;
+
+        cynw_p2p<sc_dt::sc_bv<1> >::in dma_write_rsp;
 
         #endif
 
@@ -84,12 +88,14 @@ class esp_accelerator : public sc_module
             , dma_read_ctrl("dma_read_ctrl")
             , dma_write_ctrl("dma_write_ctrl")
             , dma_write_chnl("dma_write_chnl")
+            , dma_write_rsp("dma_write_rsp")
         {
             // Clock and reset binding
             dma_read_ctrl.clk_rst(clk, rst);
             dma_read_chnl.clk_rst(clk, rst);
             dma_write_ctrl.clk_rst(clk, rst);
             dma_write_chnl.clk_rst(clk, rst);
+            dma_write_rsp.clk_rst(clk, rst);
         }
 
         // Reset functions

@@ -57,11 +57,15 @@ class esp_dma_controller : public sc_module
         // DMA read channel (blocking)
         b_put_initiator<sc_dt::sc_bv<_DMA_WIDTH_> > dma_read_chnl;
 
+        b_put_initiator<sc_dt::sc_bv<1> > dma_write_rsp;
+
         #else
 
         // DMA read channel (blocking)
         cynw_p2p<sc_dt::sc_bv<32> >::out dma_read_chnl;
-
+ 
+        cynw_p2p<sc_dt::sc_bv<1> >::out dma_write_rsp;
+ 
         #endif
 
         // Accelerator reset
@@ -77,6 +81,7 @@ class esp_dma_controller : public sc_module
             , dma_write_ctrl("dma_write_ctrl")
             , dma_write_chnl("dma_write_chnl")
             , dma_read_chnl("dma_read_chnl")
+            , dma_write_rsp("dma_write_rsp")
             , acc_done("acc_done")
             , acc_rst("acc_rst")
             , num_of_write_burst(0)
@@ -94,6 +99,7 @@ class esp_dma_controller : public sc_module
             dma_read_chnl.clk_rst(clk, rst);
             dma_write_ctrl.clk_rst(clk, rst);
             dma_write_chnl.clk_rst(clk, rst);
+            dma_write_rsp.clk_rst(clk, rst);
         }
 
         // Process

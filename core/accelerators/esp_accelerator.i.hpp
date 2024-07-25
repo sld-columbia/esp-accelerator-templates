@@ -26,9 +26,11 @@ inline void esp_accelerator<_DMA_WIDTH_>::reset_dma_write()
   #if 0 
     dma_write_ctrl.reset_put();
     dma_write_chnl.reset_put();
+    dma_write_rsp.reset_get();
   #else
     dma_write_ctrl.reset();
     dma_write_chnl.reset();
+    dma_write_rsp.reset();
   #endif
 }
 

@@ -40,6 +40,8 @@ class esp_system : public sc_module
         // DMA write channel
         put_get_channel< sc_dt::sc_bv<_DMA_WIDTH_> > dma_write_chnl;
 
+        put_get_channel< sc_dt::sc_bv<1> > dma_write_rsp;
+
         #else
 
         // DMA read control
@@ -53,6 +55,8 @@ class esp_system : public sc_module
 
         // DMA write channel
         cynw_p2p< sc_dt::sc_bv<32> > dma_write_chnl;
+
+        cynw_p2p< sc_dt::sc_bv<1> > dma_write_rsp;
 
         #endif
 
@@ -91,6 +95,7 @@ class esp_system : public sc_module
             , dma_write_ctrl("dma_write_ctrl")
             , dma_read_chnl("dma_read_chnl")
             , dma_write_chnl("dma_write_chnl")
+            , dma_write_rsp("dma_write_rsp")
             , conf_info("conf_info")
             , conf_done("conf_done")
             , acc_rst("acc_rst")
@@ -110,6 +115,7 @@ class esp_system : public sc_module
             dmac->dma_read_chnl(dma_read_chnl);
             dmac->dma_write_ctrl(dma_write_ctrl);
             dmac->dma_write_chnl(dma_write_chnl);
+            dmac->dma_write_rsp(dma_write_rsp);
             dmac->acc_done(acc_done);
             dmac->acc_rst(acc_rst);
         }
