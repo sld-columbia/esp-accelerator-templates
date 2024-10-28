@@ -8,17 +8,17 @@
 
 #if defined(SC_FIXED_POINT) || defined(SC_FIXED_POINT_FAST)
 
-// Using SystemC fixed point
+    // Using SystemC fixed point
 
-#define SC_INCLUDE_FX
-#include <systemc.h>
+    #define SC_INCLUDE_FX
+    #include <systemc.h>
 
 #else
 
-// Using cynw fixed point (default)
+    // Using cynw fixed point (default)
 
-#include <systemc.h>
-#include <cynw_fixed.h>
+    #include <cynw_fixed.h>
+    #include <systemc.h>
 
 #endif
 
@@ -26,15 +26,15 @@
 
 #ifdef __CARGO__
 
-// Using CARGO flex channels
+    // Using CARGO flex channels
 
-#include <flex_channels.hpp>
+    #include <flex_channels.hpp>
 
 #else
 
-// Using cynw flex channels (default)
+    // Using cynw flex channels (default)
 
-#include <cynw_flex_channels.h>
+    #include <cynw_flex_channels.h>
 
 #endif
 

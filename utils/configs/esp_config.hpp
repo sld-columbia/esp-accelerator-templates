@@ -6,50 +6,44 @@
 
 #include "core/accelerators/esp_accelerator.hpp"
 
-class esp_config : public sc_module
-{
+class esp_config : public sc_module {
 
-    public:
+  public:
+    // Input ports
 
-        // Input ports
+    // Clock signal
+    sc_in<bool> clk;
 
-        // Clock signal
-        sc_in<bool> clk;
+    // Reset signal
+    sc_in<bool> rst;
 
-        // Reset signal
-        sc_in<bool> rst;
+    // Accelerator configuration
+    sc_in<conf_info_t> conf_info;
 
-        // Accelerator configuration
-        sc_in<conf_info_t> conf_info;
+    // Accelerator start signal
+    sc_in<bool> conf_done;
 
-        // Accelerator start signal
-        sc_in<bool> conf_done;
+    // Constructor
+    SC_HAS_PROCESS(esp_config);
+    esp_config(const sc_module_name &name) : sc_module(name)
+    {
+        SC_CTHREAD(config_accelerator, clk.pos());
+        reset_signal_is(rst, false);
+        // set_stack_size(0x400000);
+    }
 
-        // Constructor
-        SC_HAS_PROCESS(esp_config);
-        esp_config(const sc_module_name &name)
-            : sc_module(name)
-        {
-            SC_CTHREAD(config_accelerator, clk.pos());
-            reset_signal_is(rst, false);
-            // set_stack_size(0x400000);
-        }
+    // Process
 
-        // Process
+    // Configure the accelerator
+    virtual void config_accelerator() = 0;
 
-        // Configure the accelerator
-        virtual void config_accelerator() = 0;
+    // Function
 
-        // Function
-
-        // Binding the accelerator
-        template <size_t _DMA_WIDTH_> inline void
-        bind_with(esp_accelerator<_DMA_WIDTH_> &accelerator);
-
+    // Binding the accelerator
+    template <size_t _DMA_WIDTH_> inline void bind_with(esp_accelerator<_DMA_WIDTH_> &accelerator);
 };
 
 // Implementation
 #include "esp_config.i.hpp"
 
 #endif // __ESP_CONFIG_HPP__
-

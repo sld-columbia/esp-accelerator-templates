@@ -3,12 +3,10 @@
 
 // Functions
 
-template <size_t _DMA_WIDTH_> inline
-void esp_accelerator_1P<_DMA_WIDTH_>::reset_compute_kernel()
+template <size_t _DMA_WIDTH_> inline void esp_accelerator_1P<_DMA_WIDTH_>::reset_compute_kernel()
 {
     this->reset_dma_read();
     this->reset_dma_write();
 
     this->reset_accelerator_done();
 }
-

@@ -3,54 +3,40 @@
 
 // Reset functions
 
-template <
-  size_t _DMA_WIDTH_
->
-inline void esp_accelerator<_DMA_WIDTH_>::reset_dma_read()
+template <size_t _DMA_WIDTH_> inline void esp_accelerator<_DMA_WIDTH_>::reset_dma_read()
 {
-  #if 0
+#if 0
     dma_read_ctrl.reset_put();
     dma_read_chnl.reset_get();
-  #else
+#else
     dma_read_ctrl.reset();
     dma_read_chnl.reset();
-  #endif
-
+#endif
 }
 
-template <
-  size_t _DMA_WIDTH_
->
-inline void esp_accelerator<_DMA_WIDTH_>::reset_dma_write()
+template <size_t _DMA_WIDTH_> inline void esp_accelerator<_DMA_WIDTH_>::reset_dma_write()
 {
-  #if 0 
+#if 0 
     dma_write_ctrl.reset_put();
     dma_write_chnl.reset_put();
-  #else
+#else
     dma_write_ctrl.reset();
     dma_write_chnl.reset();
-  #endif
+#endif
 }
 
-template <
-  size_t _DMA_WIDTH_
->
-inline void esp_accelerator<_DMA_WIDTH_>::reset_accelerator_done()
+template <size_t _DMA_WIDTH_> inline void esp_accelerator<_DMA_WIDTH_>::reset_accelerator_done()
 {
-    acc_done.write(false);   
+    acc_done.write(false);
 }
 
 // Utility functions
 
-template <
-    size_t _DMA_WIDTH_
-> 
-inline void esp_accelerator<_DMA_WIDTH_>::process_done()
+template <size_t _DMA_WIDTH_> inline void esp_accelerator<_DMA_WIDTH_>::process_done()
 {
     HLS_DEFINE_PROTOCOL("process-done");
 
-    do 
-    {
+    do {
         HLS_UNROLL_LOOP(OFF);
 
         wait();
@@ -58,14 +44,12 @@ inline void esp_accelerator<_DMA_WIDTH_>::process_done()
     } while (true);
 }
 
-template <
-    size_t _DMA_WIDTH_
->
-inline void esp_accelerator<_DMA_WIDTH_>::accelerator_done()
+template <size_t _DMA_WIDTH_> inline void esp_accelerator<_DMA_WIDTH_>::accelerator_done()
 {
     HLS_DEFINE_PROTOCOL("accelerator-done");
 
-    acc_done.write(true); wait();
+    acc_done.write(true);
+    wait();
 
     acc_done.write(false);
 }

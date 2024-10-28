@@ -3,23 +3,20 @@
 
 // Processes
 
-template <
-    size_t _DMA_WIDTH_,
-    size_t _MEM_SIZE_
-    >
+template <size_t _DMA_WIDTH_, size_t _MEM_SIZE_>
 void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller()
 {
-    #if 0
+#if 0
     dma_read_ctrl.reset_get();
     dma_read_chnl.reset_put();
     dma_write_ctrl.reset_get();
     dma_write_chnl.reset_get();
-    #else
+#else
     dma_read_ctrl.reset();
     dma_read_chnl.reset();
     dma_write_ctrl.reset();
     dma_write_chnl.reset();
-    #endif
+#endif
 
     acc_rst.write(false);
     wait();
@@ -27,18 +24,15 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller()
 
     ESP_REPORT_INFO("reset done");
 
-    while (true)
-    {
+    while (true) {
 
-        do { wait(); }
-        while ( !dma_read_ctrl.nb_can_get()
-                && !dma_write_ctrl.nb_can_get()
-                && !acc_done.read());
+        do {
+            wait();
+        } while (!dma_read_ctrl.nb_can_get() && !dma_write_ctrl.nb_can_get() && !acc_done.read());
 
         // Kernel is done
 
-        if (acc_done.read())
-        {
+        if (acc_done.read()) {
             ESP_REPORT_INFO("accelerator done");
 
             ESP_REPORT_TIME(load_input_begin, "BEGIN - first read");
@@ -60,16 +54,14 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller()
 
         // Read request
 
-        if (dma_read_ctrl.nb_can_get())
-        {
+        if (dma_read_ctrl.nb_can_get()) {
             dma_info_t dma_info;
             bool flag = dma_read_ctrl.nb_get(dma_info);
             sc_assert(flag);
-            uint32_t mem_base = dma_info.index;
+            uint32_t mem_base   = dma_info.index;
             uint32_t burst_size = dma_info.length;
 
-            ESP_REPORT_DEBUG("read request with index %d and length %d",
-                             mem_base, burst_size);
+            ESP_REPORT_DEBUG("read request with index %d and length %d", mem_base, burst_size);
 
             num_of_read_burst++;
             total_read_bytes += dma_info.length * (_DMA_WIDTH_ / 8);
@@ -79,16 +71,14 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller()
 
         // Write request
 
-        if (dma_write_ctrl.nb_can_get())
-        {
+        if (dma_write_ctrl.nb_can_get()) {
             dma_info_t dma_info;
             bool flag = dma_write_ctrl.nb_get(dma_info);
             sc_assert(flag);
-            uint32_t mem_base = dma_info.index;
+            uint32_t mem_base   = dma_info.index;
             uint32_t burst_size = dma_info.length;
 
-            ESP_REPORT_DEBUG("write request with index %d and length %d",
-                             mem_base, burst_size);
+            ESP_REPORT_DEBUG("write request with index %d and length %d", mem_base, burst_size);
 
             num_of_write_burst++;
             total_write_bytes += dma_info.length * (_DMA_WIDTH_ / 8);
@@ -100,57 +90,46 @@ void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::controller()
 
 // Functions
 
-template <size_t _DMA_WIDTH_, size_t _MEM_SIZE_> inline
-void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::dma_read(
-    uint32_t mem_base, uint32_t burst_size)
+template <size_t _DMA_WIDTH_, size_t _MEM_SIZE_>
+inline void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::dma_read(uint32_t mem_base,
+                                                                  uint32_t burst_size)
 {
     static bool first_dma_read = true;
 
-    if (first_dma_read)
-    {
-        load_input_begin = sc_time_stamp();
-    }
+    if (first_dma_read) { load_input_begin = sc_time_stamp(); }
 
     sc_assert(mem != NULL);
-    for (uint32_t i = 0; i < burst_size; ++i)
-    {
+    for (uint32_t i = 0; i < burst_size; ++i) {
         sc_assert(mem_base + i < _MEM_SIZE_);
 
         sc_dt::sc_bv<_DMA_WIDTH_> data = mem[mem_base + i];
         dma_read_chnl.put(data);
     }
 
-    if (first_dma_read)
-    {
+    if (first_dma_read) {
         load_input_end = sc_time_stamp();
         first_dma_read = false;
     }
 }
 
-template <size_t _DMA_WIDTH_, size_t _MEM_SIZE_> inline
-void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::dma_write(
-    uint32_t mem_base, uint32_t burst_size)
+template <size_t _DMA_WIDTH_, size_t _MEM_SIZE_>
+inline void esp_dma_controller<_DMA_WIDTH_, _MEM_SIZE_>::dma_write(uint32_t mem_base,
+                                                                   uint32_t burst_size)
 {
     static bool first_dma_write = true;
 
-    if (first_dma_write)
-    {
-        store_output_begin = sc_time_stamp();
-    }
+    if (first_dma_write) { store_output_begin = sc_time_stamp(); }
 
     sc_assert(mem != NULL);
-    for (uint32_t i = 0; i < burst_size; ++i)
-    {
+    for (uint32_t i = 0; i < burst_size; ++i) {
         sc_assert(mem_base + i < _MEM_SIZE_);
 
         sc_dt::sc_bv<_DMA_WIDTH_> data = dma_write_chnl.get();
-        mem[mem_base + i] = data;
+        mem[mem_base + i]              = data;
     }
 
-    if (first_dma_write)
-    {
+    if (first_dma_write) {
         store_output_end = sc_time_stamp();
-        first_dma_write = false;
+        first_dma_write  = false;
     }
 }
-

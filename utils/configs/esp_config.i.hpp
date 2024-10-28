@@ -3,9 +3,7 @@
 
 // Function
 
-template <
-    size_t _DMA_WIDTH_
-    >
+template <size_t _DMA_WIDTH_>
 inline void esp_config::bind_with(esp_accelerator<_DMA_WIDTH_> &accelerator)
 {
     clk(accelerator.clk);
@@ -13,4 +11,3 @@ inline void esp_config::bind_with(esp_accelerator<_DMA_WIDTH_> &accelerator)
     conf_info(accelerator.conf_info);
     conf_done(accelerator.conf_done);
 }
-
