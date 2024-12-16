@@ -27,17 +27,17 @@ class dma_info_t {
     // Length
     uint32_t length;
 
-    // Length
+    // Size
     sc_dt::sc_bv<3> size;
 
     // User
-    sc_dt::sc_bv<5> user;
+    sc_dt::sc_bv<6> user;
 
     // Constructors
 
     dma_info_t() : index(0), length(0), size(SIZE_WORD), user(0) {}
 
-    dma_info_t(uint32_t i, uint32_t l, sc_dt::sc_bv<3> s, sc_dt::sc_bv<5> u) :
+    dma_info_t(uint32_t i, uint32_t l, sc_dt::sc_bv<3> s, sc_dt::sc_bv<6> u) :
         index(i), length(l), size(s), user(u)
     {
     }
